@@ -28,13 +28,13 @@ export async function handleOrder(
   const preference = await createPreference({
     items: [
       {
-        title: product.productData.title,
-        description: product.productData.description,
+        title: product.fields.Name,
+        description: product.fields.Description.substring(0, 256),
         picture_url: "http://www.myapp.com/myimage.jpg",
         category_id: "car_electronics",
         quantity: 1,
         currency_id: "ARS",
-        unit_price: JSON.parse(product.productData.precio),
+        unit_price: product.fields["Unit cost"],
       },
     ],
     back_urls: {
@@ -42,7 +42,7 @@ export async function handleOrder(
       pending: "https://www.google.com.ar",
     },
     external_reference: order.id,
-    notification_url: `https://dwf-m9-clase5.vercel.app/api/webhooks/mercadopago`,
+    notification_url: `dwf-m9-desafio-final-eight.vercel.app/api/ipn/mercadopago`,
   });
 
   console.log("preference with id: " + preference.body.id + " was created");

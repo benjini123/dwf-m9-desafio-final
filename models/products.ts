@@ -1,3 +1,4 @@
+import { index } from "lib/algolia";
 import { firestore } from "lib/firestore";
 
 const collection = firestore.collection("products");
@@ -23,12 +24,12 @@ export class Product {
     await productData.pull();
     return productData;
   }
+
   static async checkProduct(productId: string) {
-    const productSnap = await collection.doc(productId);
+    const productSnap: any = await index.getObject(productId);
+    console.log(productSnap.fields);
     if (productSnap) {
-      const product = new Product(productId);
-      await product.pull();
-      return product.data;
+      return productSnap;
     } else {
       return false;
     }
