@@ -42,7 +42,7 @@ export async function handleOrder(
       pending: "https://www.google.com.ar",
     },
     external_reference: order.id,
-    notification_url: `dwf-m9-desafio-final-eight.vercel.app/api/ipn/mercadopago`,
+    notification_url: `https://dwf-m9-desafio-final-eight.vercel.app/api/ipn/mercadopago`,
   });
 
   console.log("preference with id: " + preference.body.id + " was created");
