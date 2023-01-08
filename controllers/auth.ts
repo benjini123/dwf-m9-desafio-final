@@ -5,7 +5,6 @@ import addMinutes from "date-fns/addMinutes";
 import gen from "random-seed";
 
 var seed = "asssss";
-var random = gen.create(seed);
 
 export async function findOrCreateAuth(email: string) {
   const cleanEmail = email.trim().toLowerCase();
@@ -28,6 +27,7 @@ export async function findOrCreateAuth(email: string) {
 
 export async function sendCode(email: string) {
   const auth = (await findOrCreateAuth(email)) as any;
+  var random = gen.create();
   const code = random.intBetween(10000, 99999);
   const now = new Date();
   const twentyMinFromNow = addMinutes(now, 20);
@@ -44,5 +44,5 @@ export async function sendCode(email: string) {
 
   await sgMail.send(msg);
 
-  return auth;
+  return auth.data;
 }

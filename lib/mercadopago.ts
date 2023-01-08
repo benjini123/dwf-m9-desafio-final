@@ -10,6 +10,12 @@ export async function createPreference(data = {}) {
 }
 
 export async function getMerchantOrder(id: any) {
-  const res = await mercadopago.merchant_orders.get(id);
-  return res.body;
+  try {
+    const res = await mercadopago.merchant_orders.get(id);
+    console.log({ res });
+    return res.body;
+  } catch (e: any) {
+    console.log(e.message, 11111);
+    throw new Error(e.message);
+  }
 }

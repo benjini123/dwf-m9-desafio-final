@@ -1,7 +1,6 @@
 import { createPreference } from "lib/mercadopago";
 import { Order } from "models/order";
 import { Product } from "models/products";
-import { User } from "models/user";
 
 export async function handleOrder(
   userId: string,
@@ -9,9 +8,8 @@ export async function handleOrder(
   productData: object
 ) {
   const product: any = await Product.checkProduct(productId);
-
   if (!product) {
-    return console.error({ message: "product does not exist" });
+    throw new Error("product does not exist");
   }
 
   const order = await Order.createNewOrder({
@@ -22,7 +20,7 @@ export async function handleOrder(
   });
 
   if (!order.id) {
-    return console.error({ message: "failed to create order" });
+    throw new Error("failed to create order");
   }
 
   console.log("Order with id:" + order.id + " was created");
@@ -36,7 +34,7 @@ export async function handleOrder(
         category_id: "car_electronics",
         quantity: 1,
         currency_id: "ARS",
-        unit_price: product.productData.price,
+        unit_price: JSON.parse(product.productData.precio),
       },
     ],
     back_urls: {
@@ -47,10 +45,23 @@ export async function handleOrder(
     notification_url: `https://dwf-m9-clase5.vercel.app/api/webhooks/mercadopago`,
   });
 
-  console.log("preference was created");
+  console.log("preference with id: " + preference.body.id + " was created");
 
   order.initPoint = preference.body.init_point;
   await order.push();
 
-  return order.initPoint;
+  return order;
+}
+
+export async function getMyOrders(userId: string) {
+  const orders = await Order.getAll(userId);
+
+  return orders;
+}
+
+export async function getOrderById(orderId: string) {
+  const order = new Order(orderId);
+  await order.pull();
+
+  return order.data;
 }

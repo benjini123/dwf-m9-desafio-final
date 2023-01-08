@@ -44,4 +44,17 @@ export class Order {
   async getDbOrder(id: string) {
     const order = await collection.doc(id);
   }
+
+  static async getAll(id: string) {
+    let hits: Array<any> = [];
+
+    const orders = await collection.where("userId", "==", id);
+    const orderData = await orders.get();
+
+    orderData.forEach((doc) => {
+      hits.push(doc.data());
+    });
+
+    return hits;
+  }
 }

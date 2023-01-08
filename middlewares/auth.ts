@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import parseToken from "parse-bearer-token";
-import { decode } from "middlewares/jwt";
+import { decode } from "./jwt";
 
-export function authMiddleware(callback: Function) {
+export function authMiddleware(callback: any) {
   return function (req: NextApiRequest, res: NextApiResponse) {
     const token = parseToken(req);
     if (!token) {

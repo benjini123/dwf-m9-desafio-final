@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export function generate(obj: any) {
-  return jwt.sign(obj, process.env.JWT_SECRET as any);
+  return jwt.sign(obj, process.env.JWT_SECRET as string);
 }
 
 export function decode(token: any) {

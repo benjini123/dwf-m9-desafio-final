@@ -1,18 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { generate } from "middlewares/jwt";
-import { Auth } from "models/auth";
-import { isAfter } from "date-fns";
+import { verifyCode } from "controllers/token";
+import methods from "micro-method-router";
+import { yupTokenMiddleware } from "yup/token";
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+async function getTokenFromCode(req: NextApiRequest, res: NextApiResponse) {
   const { email, code } = req.body;
-  var auth: any = await Auth.findByEmailAndCode(email, code);
-  if (!auth) {
-    res.status(401).send({ message: "not allowed" });
+  try {
+    const token = await verifyCode(email, code);
+    res.send({ token });
+  } catch (e: any) {
+    res.status(400).send({ message: e.message });
   }
-  const expired = auth.isCodeExpired();
-  if (expired) {
-    res.status(401).send({ message: "token expirado" });
-  }
-  const token = generate({ userId: auth.data.userId });
-  res.send({ token });
 }
+
+const handler = methods({
+  get: getTokenFromCode,
+});
+
+export default yupTokenMiddleware(handler);
